@@ -1,7 +1,65 @@
 ### Exercice 2 Le workspace retiré
 
-J'ai commenté la ligne "with workspace" puis arrangé le code pour qu'il reste valide syntaxiquement. J'ai en ensuite tapé les commandes **jenga info** et **jenga build** qui m'ont toutes les deux renvoyés le meme retour 
+J'ai commenté la ligne "with workspace" puis arrangé le code pour qu'il reste valide syntaxiquement. 
 
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+from Jenga import *
+
+#with workspace("MonRhiWks", location="."):
+configurations(["Debug", "Release"])
+
+# La bibliotheque : du code compile, sans main.
+with project("MonRhi"):
+       staticlib()
+       language("C++")
+       cppdialect("C++17")
+       location(".")
+       files(["src/MonRhi/**.cpp"])
+       includedirs(["src"])
+       objdir("%{wks.location}/Build/Obj/"
+              "%{cfg.buildcfg}-%{cfg.system}/%{prj.name}")
+       targetdir("%{wks.location}/Build/Lib/"
+              "%{cfg.buildcfg}-%{cfg.system}")
+
+# Le programme qui s'en sert.
+with project("Essai"):
+       consoleapp()
+       language("C++")
+       cppdialect("C++17")
+       location(".")
+       files(["src/Essai/**.cpp"])
+       includedirs(["src"])
+       libdirs(["%{wks.location}/Build/Lib/"
+              "%{cfg.buildcfg}-%{cfg.system}"])
+       links(["MonRhi"])
+       objdir("%{wks.location}/Build/Obj/"
+              "%{cfg.buildcfg}-%{cfg.system}/%{prj.name}")
+       targetdir("%{wks.location}/Build/Bin/"
+              "%{cfg.buildcfg}-%{cfg.system}/%{prj.name}")
+
+
+J'ai en ensuite tapé les commandes **jenga info** et **jenga build** qui m'ont toutes les deux renvoyés le meme retour 
+
+PS C:\dane\ecole\Teguis\exercices\DaneRhi> jenga info 
+
+╔══════════════════════════════════════════════════════════════════╗
+║                                                                  ║
+║                ██╗███████╗███╗   ██╗ ██████╗  █████╗             ║
+║                ██║██╔════╝████╗  ██║██╔════╝ ██╔══██╗            ║
+║                ██║█████╗  ██╔██╗ ██║██║  ███╗███████║            ║
+║           ██   ██║██╔══╝  ██║╚██╗██║██║   ██║██╔══██║            ║
+║           ╚█████╔╝███████╗██║ ╚████║╚██████╔╝██║  ██║            ║
+║            ╚════╝ ╚══════╝╚═╝  ╚═══╝ ╚═════╝ ╚═╝  ╚═╝            ║
+║                                                                  ║
+║             Multi-platform C/C++ Build System v2.8.0             ║
+║                                                                  ║
+╚══════════════════════════════════════════════════════════════════╝
+
+## No .jenga workspace file found.
+
+PS C:\dane\ecole\Teguis\exercices\DaneRhi> jenga build
 
 ╔══════════════════════════════════════════════════════════════════╗
 ║                                                                  ║
