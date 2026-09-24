@@ -102,7 +102,7 @@ Status:         ✓ SUCCESS
 ════════════════════════════════════════════════════════════════════════════════
 
 
-On constate ici que la commande jenga bbuild, en plus de construire notre projet nous donne tout un d'information utiles. Elle nous detaille en quelque sorte son processus de travail. Nous avons donc
+On constate ici que la commande jenga build, en plus de construire notre projet nous donne tout un tas d'information utiles. Elle nous detaille en quelque sorte son processus de travail. Nous avons donc
 
 **Le chargement du workspace**
 **Les configurations des build**
@@ -114,7 +114,15 @@ Ici la compilation a été un **succès**, on a le temps de compilation **0.33s*
 
 ## Jenga Run
 
-J'ai lancé **jenga run** et obtenu ceci 
+J'ai modifi le projet en ajoutant un fichier main.cpp dans le projet Essai
+
+#include "MonRhi/MonRhi.h"
+
+int main(){
+    std::cout<<"Hello World from Essai!"<<std::endl;
+}
+
+J'ai ensuite recompiler puis lancé la commande **jenga run** et voici le retour
 
 
 PS C:\dane\ecole\Teguis\exercices\DaneRhi> jenga run  
@@ -132,8 +140,21 @@ PS C:\dane\ecole\Teguis\exercices\DaneRhi> jenga run
 ║                                                                  ║
 ╚══════════════════════════════════════════════════════════════════╝
 
-Executable not found: C:\dane\ecole\Teguis\Exercices\DaneRHI\Build\Bin\Debug-Windows\Essai\Essai.exe
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  ▶  EXECUTION  —  Essai.exe
+     C:\dane\ecole\Teguis\Exercices\DaneRHI\Build\Bin\Debug-Windows\Essai\Essai.exe
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-J'ai en retour cette erreur qui me signale que il n y a pas d' executable dans le dossier compilé du projet Essai. Et c'est logique, Jenga build signalait deja plus haut que il n'y a pas de fichier source mais ce n'etait pas bloquant. Ici c'est exactement ce avec quoi jenga run travaille et ne peut rien faire s'il n'y a rien à executer.
+Hello World from Essai!
 
-On note aussi que l'erreur ne se plaint que du projet Essai pourtant il y a deux projet et le projet MonRhi est meme le premier dans la liste! L difference est que MonRhi est est une Static Lib et n' a donc pas vocation a etre excutéé.
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  ◀  FIN D'EXECUTION  —  termine normalement  (0.13s)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+
+On peut donc observer le cheminement de travail de jenga run qui 
+**Donne le nom du fichier qu'il execute ainsi que son emplacement**
+**Affiche le resultat de l'execution en elle meme**
+**En enfin se conclue en precisant si tout c'est bien passé**
+
+Ici l'execution s'est **terminé normalement** en **0.13s**
