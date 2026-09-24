@@ -20,4 +20,4 @@ J'ai ensuite fait un **jenga build** après avoir vérifié les tailles des fich
 
 On constate que la taille de `MonRhi.lib` a augmenté avec l'ajout de lu fichier Inutile. Et le fichier essai.exe, lui est resté inchangé
 
-Cela montre que le compilateur a compilé chaque fichier de MonRhi pour formé la lib. Mais le lieur lui ne lie que ce dont on a besoin et a donc ecarté la bibliotèque qui n'est jamais appelé.
+Cela montre que le compilateur a compilé chaque fichier de MonRhi pour formé la lib. Mais le lieur lui ne lie que ce dont on a besoin et a donc ecarté la bibliotèque qui n'est jamais appelé. 
