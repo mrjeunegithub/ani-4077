@@ -319,3 +319,10 @@ Le test avec les deux ordres de `links` montre ensuite que, sur la machine utili
 On retient ainsi que le système de build peut construire les trois projets dans le bon ordre, mais que cela ne signifie pas automatiquement que toutes les bibliothèques sont disponibles au moment du linkage de `Essai`. Une bibliothèque dont les symboles sont utilisés doit être prise en compte par le linkage. Dans notre expérience, `MonUtil` devait donc être ajoutée à `links` dès lors que `Essai` appelait directement `PrintUtil()`.
 
 Enfin, cette expérience montre l'intérêt de distinguer la compilation de l'édition de liens : ici, les fichiers sources sont correctement compilés, mais c'est au moment de la résolution des références entre bibliothèques que l'absence de `MonUtil` provoque l'échec.
+
+
+### NB: Je prefere le dire
+
+Après avoir fait l'exercice, je l'ai envoyé à l'IA en demandant, "Est ce qu'il y a quelque chose que le prof voulait nous montrer que je n'ai pas mis en avant ?". Elle m'a rpondu que il etait question de creer une fonction dans `MonRhi` qui depent d'une fonction dans `MonUtil` et qui est appelé dans `Essai`. Moi, j'appelais directement `PrintUtil()` qui est dans `MonUtil` à partir de essai. J'ai fait la modification recommandée par l'IA (C'est la structure actuellement presente dans mon projet) en ajoutant une fonction `transition()` dans `MonRhi` qui appele `PrintUtil()` et qui est appelé dans `Essai/main.cpp` à la place de `PrintUtil()`. 
+
+Puis j'ai refait les tests et obtenu exactement les memes résultats d'où je n'ai pas trouv nécessaire de faire de modification das mon résonnement et mon rendu.
