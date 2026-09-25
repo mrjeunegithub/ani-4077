@@ -46,4 +46,4 @@ Le fichier pose également des defines dépendant de la plateforme et de la conf
 
 ### Conclusion
 
-`NKRHI` possède donc **10 dépendances de base**, auxquelles peuvent s'ajouter **3 dépendances optionnelles**. Les defines montrent que la configuration du moteur varie selon les fonctionnalités activées, la plateforme utilisée et la configuration Debug/Release.
+`NKRHI` possède donc exactement **10 dépendances de base**, auxquelles peuvent s'ajouter **3 dépendances optionnelles**. Les defines montrent que la configuration du moteur varie selon les fonctionnalités activées, la plateforme utilisée et la configuration Debug/Release.
