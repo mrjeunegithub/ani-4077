@@ -1,0 +1,4 @@
+C:\dane\ecole\Teguis\Exercices\ani-4077\DaneRHI\Build\Obj\Debug-Windows\MonRhi\src_MonRhi_MonRhi.obj: \
+  C:/dane/ecole/Teguis/Exercices/ani-4077/DaneRHI/src/MonRhi/MonRhi.cpp \
+  C:/dane/ecole/Teguis/Exercices/ani-4077/DaneRHI/src/MonRhi/MonRhi.h \
+  C:/dane/ecole/Teguis/Exercices/ani-4077/DaneRHI/src/MonUtil/MonUtil.h

@@ -6,7 +6,7 @@ J'ai ajouté une fonction for dans `Essai/main.cpp` qui somme les entiers jusqu'
 
 int main(){
     long long somme = 0;
-    for(long long i=0; i<100000000000; i++){
+    for(long long i=0; i<1000000000; i++){
         somme += i;
     }
     std::cout<<somme<<std::endl;

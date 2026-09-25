@@ -1,25 +1,26 @@
-# C2 — Exercice 3
+## Exercice 7 Trois projets, une chaine
 
-## 1. Retrait de `includedirs`
+### NB: Mon workspace est desormais present en entier sur mon depot github à https://github.com/mrjeunegithub/ani-4077/tree/main/DaneRhi
 
-with project("Essai"):
-              consoleapp()
-              language("C++")
-              cppdialect("C++17")
-              location(".")
-              files(["src/Essai/\*\*.cpp"])
-              #includedirs(["src"])
-              libdirs(["%{wks.location}/Build/Lib/"
-                     "%{cfg.buildcfg}-%{cfg.system}"])
-              links(["MonRhi"])
-              objdir("%{wks.location}/Build/Obj/"
-                     "%{cfg.buildcfg}-%{cfg.system}/%{prj.name}")
-              targetdir("%{wks.location}/Build/Bin/"
-                     "%{cfg.buildcfg}-%{cfg.system}/%{prj.name}")
+J'ai ajouté un troisième projet `MonUtil` donc dépend `MonRhi` Et j' ai ajouté une fonction `PrintUtil()` pour lest tests
 
-### Message obtenu
+with project("MonUtil"):
+        staticlib()
+        language("C++")
+        cppdialect("C++17")
+        location(".")
+        files(["src/MonUtil/**.cpp"])
+        includedirs(["src"])
+        objdir("%{wks.location}/Build/Obj/"
+                "%{cfg.buildcfg}-%{cfg.system}/%{prj.name}")
+        targetdir("%{wks.location}/Build/Lib/"
+                "%{cfg.buildcfg}-%{cfg.system}")
 
-PS C:\dane\ecole\Teguis\Exercices\DaneRhi> jenga build
+### Pas de 'MonUtil' à Links
+
+J'ai d'abord essayé de compilé sans ajouté **MonUtil** à links et la compilation a échoué
+
+PS C:\dane\ecole\Teguis\exercices\ani-4077\DaneRhi> jenga build  
 
 ╔══════════════════════════════════════════════════════════════════╗
 ║                                                                  ║
@@ -40,130 +41,37 @@ Configuration: Debug
 Target:        Windows x86_64
 Toolchain:     clang-mingw
 
-Build Order (2 projects):
+Build Order (3 projects):
   1. MonRhi [STATIC_LIB] → 
-  2. Essai [CONSOLE_APP]
+  2. MonUtil [STATIC_LIB] → 
+  3. Essai [CONSOLE_APP]
 
 
 ╔══════════════════════════════════════════════════════════════════════════════════════════════╗
 ║  Project: MonRhi                                                           Kind: STATIC_LIB  ║
 ╚══════════════════════════════════════════════════════════════════════════════════════════════╝
 
-ℹ Found 1 source file(s)
-✓ All files up to date
-
-┌──────────────────────────────────────────────────────────────────────────────────────────────┐
-│  ✓ Build Successful                                                             Time: 0.00s  │
-└──────────────────────────────────────────────────────────────────────────────────────────────┘
-
-╔══════════════════════════════════════════════════════════════════════════════════════════════╗
-║  Project: Essai                                                           Kind: CONSOLE_APP  ║
-╚══════════════════════════════════════════════════════════════════════════════════════════════╝
-
-ℹ Found 1 source file(s)
-
-╔══════════════════════════════════════════════════════════════════════════════════════════════╗
-║                                 Compilation Error: main.cpp                                  ║
-╠══════════════════════════════════════════════════════════════════════════════════════════════╣
-║ C:\dane\ecole\Teguis\Exercices\DaneRHI\src\Essai\main.cpp:1:10: fatal error:                 ║
-║ 'MonRhi/MonRhi.h' file not found                                                             ║
-║     1 | #include "MonRhi/MonRhi.h"                                                           ║
-║       |          ^~~~~~~~~~~~~~~~~                                                           ║
-║ 1 error generated.                                                                           ║
-╚══════════════════════════════════════════════════════════════════════════════════════════════╝
-
-✗ ✗ Compilation failed: C:\dane\ecole\Teguis\Exercices\DaneRHI\src\Essai\main.cpp
-
-┌──────────────────────────────────────────────────────────────────────────────────────────────┐
-│  ✗ Build Failed                                                                 Time: 0.10s  │
-│ Errors: 2  | Failed files: 1                                                                 │
-└──────────────────────────────────────────────────────────────────────────────────────────────┘
-
-════════════════════════════════════════════════════════════════════════════════
-                                  BUILD FAILED                                  
-════════════════════════════════════════════════════════════════════════════════
-Projects Built:  1/2
-Failed:         1
-Errors:         2
-Time:           0.10s
-Status:         ✗ FAILURE
-════════════════════════════════════════════════════════════════════════════════
-
-Echecs (1) — a corriger :
-  ✗ Essai
-
-### Outil qui a parlé
-
-**Le compilateur Clang**, appelé par Jenga.
-
-### Conclusion
-
-Le retrait de `includedirs` empêche le compilateur de trouver le fichier d'en-tête `MonRhi/MonRhi.h`. Cela montre que `includedirs` définit les chemins de recherche des fichiers inclus pendant la compilation. L'erreur apparaît donc avant le linkage.
-
----
-
-## 2. Retrait de `libdirs`
-
-J'ai commenté `libdirs` puis lancé un **rebuild**, afin de supprimer les anciens fichiers compilés et vérifier que le résultat ne venait pas d'une construction précédente. Et ce parce que j'ai d'abord lancé un simple jenga build et le resultat etait un succès
-
-with project("Essai"):
-              consoleapp()
-              language("C++")
-              cppdialect("C++17")
-              location(".")
-              files(["src/Essai/\*\*.cpp"])
-              includedirs(["src"])
-              #libdirs(["%{wks.location}/Build/Lib/"
-              #       "%{cfg.buildcfg}-%{cfg.system}"])
-              links(["MonRhi"])
-              objdir("%{wks.location}/Build/Obj/"
-                     "%{cfg.buildcfg}-%{cfg.system}/%{prj.name}")
-              targetdir("%{wks.location}/Build/Bin/"
-                     "%{cfg.buildcfg}-%{cfg.system}/%{prj.name}")
-
-### Message obtenu
-
-PS C:\dane\ecole\Teguis\Exercices\DaneRhi> jenga rebuild
-
-╔══════════════════════════════════════════════════════════════════╗
-║                                                                  ║
-║                ██╗███████╗███╗   ██╗ ██████╗  █████╗             ║
-║                ██║██╔════╝████╗  ██║██╔════╝ ██╔══██╗            ║
-║                ██║█████╗  ██╔██╗ ██║██║  ███╗███████║            ║
-║           ██   ██║██╔══╝  ██║╚██╗██║██║   ██║██╔══██║            ║
-║           ╚█████╔╝███████╗██║ ╚████║╚██████╔╝██║  ██║            ║
-║            ╚════╝ ╚══════╝╚═╝  ╚═══╝ ╚═════╝ ╚═╝  ╚═╝            ║
-║                                                                  ║
-║             Multi-platform C/C++ Build System v2.8.0             ║
-║                                                                  ║
-╚══════════════════════════════════════════════════════════════════╝
-
-Removed C:\dane\ecole\Teguis\Exercices\DaneRHI\Build\Obj\Debug-Windows\MonRhi\src_MonRhi_MonRhi.obj
-Removed C:\dane\ecole\Teguis\Exercices\DaneRHI\Build\Lib\Debug-Windows\MonRhi.lib
-Removed C:\dane\ecole\Teguis\Exercices\DaneRHI\Build\Obj\Debug-Windows\Essai\src_Essai_main.obj
-Removed C:\dane\ecole\Teguis\Exercices\DaneRHI\Build\Bin\Debug-Windows\Essai\Essai.exe
-Loading workspace...
-
-Configuration: Debug
-Target:        Windows x86_64
-Toolchain:     clang-mingw
-
-Build Order (2 projects):
-  1. MonRhi [STATIC_LIB] → 
-  2. Essai [CONSOLE_APP]
-
-
-╔══════════════════════════════════════════════════════════════════════════════════════════════╗
-║  Project: MonRhi                                                           Kind: STATIC_LIB  ║
-╚══════════════════════════════════════════════════════════════════════════════════════════════╝
-
-ℹ Found 1 source file(s)
-✓   [1/1] Compiled: MonRhi.cpp
+ℹ Found 2 source file(s)
+✓   [1/2] Compiled: Inutile.cpp
+✓   [2/2] Compiled: MonRhi.cpp
 ℹ Linking...
 ✓ Built: Build\Lib\Debug-Windows\MonRhi.lib
 
 ┌──────────────────────────────────────────────────────────────────────────────────────────────┐
-│  ✓ Build Successful                                                             Time: 0.65s  │
+│  ✓ Build Successful                                                             Time: 0.46s  │
+└──────────────────────────────────────────────────────────────────────────────────────────────┘
+
+╔══════════════════════════════════════════════════════════════════════════════════════════════╗
+║  Project: MonUtil                                                          Kind: STATIC_LIB  ║
+╚══════════════════════════════════════════════════════════════════════════════════════════════╝
+
+ℹ Found 1 source file(s)
+✓   [1/1] Compiled: MonUtil.cpp
+ℹ Linking...
+✓ Built: Build\Lib\Debug-Windows\MonUtil.lib
+
+┌──────────────────────────────────────────────────────────────────────────────────────────────┐
+│  ✓ Build Successful                                                             Time: 0.49s  │
 └──────────────────────────────────────────────────────────────────────────────────────────────┘
 
 ╔══════════════════════════════════════════════════════════════════════════════════════════════╗
@@ -176,59 +84,55 @@ Build Order (2 projects):
 ╔══════════════════════════════════════════════════════════════════════════════════════════════╗
 ║                                Compilation Error: Link Failed                                ║
 ╠══════════════════════════════════════════════════════════════════════════════════════════════╣
-║ C:/msys64/ucrt64/bin/ld: cannot find -lMonRhi: No such file or directory                     ║
+║ C:/msys64/ucrt64/bin/ld:                                                                     ║
+║ C:\dane\ecole\Teguis\Exercices\ani-4077\DaneRHI\Build\Obj\Debug-Windows\Essai\src_Essai_main ║
+║ .obj: in function `main':                                                                    ║
+║ C:\dane\ecole\Teguis\Exercices\ani-4077\DaneRHI\src\Essai/main.cpp:5:(.text+0x17): undefined ║
+║ reference to `PrintUtil()'                                                                   ║
 ║ clang++: error: linker command failed with exit code 1 (use -v to see invocation)            ║
 ╚══════════════════════════════════════════════════════════════════════════════════════════════╝
 ✗ Link failed: Build\Bin\Debug-Windows\Essai\Essai.exe
 
 ┌──────────────────────────────────────────────────────────────────────────────────────────────┐
-│  ✗ Build Failed                                                                 Time: 0.48s  │
-│ Errors: 1  | Failed files: 1                                                                 │
+│  ✗ Build Failed                                                                 Time: 0.53s  │
+│ Errors: 2  | Failed files: 1                                                                 │
 └──────────────────────────────────────────────────────────────────────────────────────────────┘
 
 ════════════════════════════════════════════════════════════════════════════════
                                   BUILD FAILED                                  
 ════════════════════════════════════════════════════════════════════════════════
-Projects Built:  1/2
+Projects Built:  2/3
 Failed:         1
-Errors:         1
-Time:           1.13s
+Errors:         2
+Time:           1.49s
 Status:         ✗ FAILURE
 ════════════════════════════════════════════════════════════════════════════════
 
 Echecs (1) — a corriger :
   ✗ Essai
 
+On obtient bien l'erreur mentionné dans le cours **undefined reference to PrintUtil()** qui montre que le lieur ne sait pas quoi chercher pour la fonction `PrintUtil`
 
-### Outil qui a parlé
 
-**Le linker GNU ld**, appelé dans la chaîne Clang++/MinGW.
-
-### Conclusion
-
-Le retrait de `libdirs` n'empêche pas la compilation de `main.cpp`, mais le linker ne trouve plus la bibliothèque `MonRhi`. Cela montre que `libdirs` indique les répertoires dans lesquels le linker recherche les bibliothèques nécessaires à l'édition des liens.
-
-## 3. Retrait de `links`
+### 'MonUtil' ajouté à Links
 
 with project("Essai"):
               consoleapp()
               language("C++")
               cppdialect("C++17")
               location(".")
-              files(["src/Essai/\*\*.cpp"])
+              files(["src/Essai/**.cpp"])
               includedirs(["src"])
               libdirs(["%{wks.location}/Build/Lib/"
                      "%{cfg.buildcfg}-%{cfg.system}"])
-              #links(["MonRhi"])
+              links(["MonRhi", "MonUtil"])
               objdir("%{wks.location}/Build/Obj/"
                      "%{cfg.buildcfg}-%{cfg.system}/%{prj.name}")
               targetdir("%{wks.location}/Build/Bin/"
                      "%{cfg.buildcfg}-%{cfg.system}/%{prj.name}")
 
-
-### Message obtenu
-
-PS C:\dane\ecole\Teguis\Exercices\DaneRhi> jenga rebuild
+  
+PS C:\dane\ecole\Teguis\exercices\ani-4077\DaneRhi> jenga build 
 
 ╔══════════════════════════════════════════════════════════════════╗
 ║                                                                  ║
@@ -243,31 +147,142 @@ PS C:\dane\ecole\Teguis\Exercices\DaneRhi> jenga rebuild
 ║                                                                  ║
 ╚══════════════════════════════════════════════════════════════════╝
 
-Removed C:\dane\ecole\Teguis\Exercices\DaneRHI\Build\Obj\Debug-Windows\MonRhi\src_MonRhi_MonRhi.obj
-Removed C:\dane\ecole\Teguis\Exercices\DaneRHI\Build\Lib\Debug-Windows\MonRhi.lib
-Removed C:\dane\ecole\Teguis\Exercices\DaneRHI\Build\Obj\Debug-Windows\Essai\src_Essai_main.obj
 Loading workspace...
 
 Configuration: Debug
 Target:        Windows x86_64
 Toolchain:     clang-mingw
 
-Build Order (2 projects):
+Build Order (3 projects):
   1. MonRhi [STATIC_LIB] → 
-  2. Essai [CONSOLE_APP]
+  2. MonUtil [STATIC_LIB] → 
+  3. Essai [CONSOLE_APP]
 
 
 ╔══════════════════════════════════════════════════════════════════════════════════════════════╗
 ║  Project: MonRhi                                                           Kind: STATIC_LIB  ║
 ╚══════════════════════════════════════════════════════════════════════════════════════════════╝
 
+ℹ Found 2 source file(s)
+✓ All files up to date
+
+┌──────────────────────────────────────────────────────────────────────────────────────────────┐
+│  ✓ Build Successful                                                             Time: 0.02s  │
+└──────────────────────────────────────────────────────────────────────────────────────────────┘
+
+╔══════════════════════════════════════════════════════════════════════════════════════════════╗
+║  Project: MonUtil                                                          Kind: STATIC_LIB  ║
+╚══════════════════════════════════════════════════════════════════════════════════════════════╝
+
 ℹ Found 1 source file(s)
-✓   [1/1] Compiled: MonRhi.cpp
+✓ All files up to date
+
+┌──────────────────────────────────────────────────────────────────────────────────────────────┐
+│  ✓ Build Successful                                                             Time: 0.01s  │
+└──────────────────────────────────────────────────────────────────────────────────────────────┘
+
+╔══════════════════════════════════════════════════════════════════════════════════════════════╗
+║  Project: Essai                                                           Kind: CONSOLE_APP  ║
+╚══════════════════════════════════════════════════════════════════════════════════════════════╝
+
+ℹ Found 1 source file(s)
+✓ All files up to date
+ℹ Linking...
+✓ Built: Build\Bin\Debug-Windows\Essai\Essai.exe
+
+┌──────────────────────────────────────────────────────────────────────────────────────────────┐
+│  ✓ Build Successful                                                             Time: 0.16s  │
+└──────────────────────────────────────────────────────────────────────────────────────────────┘
+
+════════════════════════════════════════════════════════════════════════════════
+                                BUILD COMPLETED                                 
+════════════════════════════════════════════════════════════════════════════════
+Projects Built:  3/3
+Time:           0.21s
+Status:         ✓ SUCCESS
+════════════════════════════════════════════════════════════════════════════════
+
+
+Cette fois, la compilation est un succès, le linkage s'est bien passé. On note d'ailleurs que l'operation a très rapide (**0.21s**) car les fichiers avaient deja été compilés lors de la precedente tentative bien que soldée par un echec à cause du linkage.
+
+### Ordre de Links inversé
+
+with project("Essai"):
+              consoleapp()
+              language("C++")
+              cppdialect("C++17")
+              location(".")
+              files(["src/Essai/**.cpp"])
+              includedirs(["src"])
+              libdirs(["%{wks.location}/Build/Lib/"
+                     "%{cfg.buildcfg}-%{cfg.system}"])
+              links(["MonUtil", "MonRhi"])
+              objdir("%{wks.location}/Build/Obj/"
+                     "%{cfg.buildcfg}-%{cfg.system}/%{prj.name}")
+              targetdir("%{wks.location}/Build/Bin/"
+                     "%{cfg.buildcfg}-%{cfg.system}/%{prj.name}")
+
+Jai ensuite lancé un `jenga rebuild`
+
+PS C:\dane\ecole\Teguis\exercices\ani-4077\DaneRhi> jenga rebuild
+
+╔══════════════════════════════════════════════════════════════════╗
+║                                                                  ║
+║                ██╗███████╗███╗   ██╗ ██████╗  █████╗             ║
+║                ██║██╔════╝████╗  ██║██╔════╝ ██╔══██╗            ║
+║                ██║█████╗  ██╔██╗ ██║██║  ███╗███████║            ║
+║           ██   ██║██╔══╝  ██║╚██╗██║██║   ██║██╔══██║            ║
+║           ╚█████╔╝███████╗██║ ╚████║╚██████╔╝██║  ██║            ║
+║            ╚════╝ ╚══════╝╚═╝  ╚═══╝ ╚═════╝ ╚═╝  ╚═╝            ║
+║                                                                  ║
+║             Multi-platform C/C++ Build System v2.8.0             ║
+║                                                                  ║
+╚══════════════════════════════════════════════════════════════════╝
+
+Removed C:\dane\ecole\Teguis\Exercices\ani-4077\DaneRHI\Build\Obj\Debug-Windows\MonRhi\src_MonRhi_Inutile.obj
+Removed C:\dane\ecole\Teguis\Exercices\ani-4077\DaneRHI\Build\Obj\Debug-Windows\MonRhi\src_MonRhi_MonRhi.obj
+Removed C:\dane\ecole\Teguis\Exercices\ani-4077\DaneRHI\Build\Lib\Debug-Windows\MonRhi.lib
+Removed C:\dane\ecole\Teguis\Exercices\ani-4077\DaneRHI\Build\Lib\Debug-Windows\MonUtil.lib
+Removed C:\dane\ecole\Teguis\Exercices\ani-4077\DaneRHI\Build\Obj\Debug-Windows\MonUtil\src_MonUtil_MonUtil.obj
+Removed C:\dane\ecole\Teguis\Exercices\ani-4077\DaneRHI\Build\Obj\Debug-Windows\Essai\src_Essai_main.obj
+Removed C:\dane\ecole\Teguis\Exercices\ani-4077\DaneRHI\Build\Bin\Debug-Windows\Essai\Essai.exe
+Loading workspace...
+
+Configuration: Debug
+Target:        Windows x86_64
+Toolchain:     clang-mingw
+
+Build Order (3 projects):
+  1. MonRhi [STATIC_LIB] → 
+  2. MonUtil [STATIC_LIB] → 
+  3. Essai [CONSOLE_APP]
+
+
+╔══════════════════════════════════════════════════════════════════════════════════════════════╗
+║  Project: MonRhi                                                           Kind: STATIC_LIB  ║
+╚══════════════════════════════════════════════════════════════════════════════════════════════╝
+
+ℹ Found 2 source file(s)
+✓   [1/2] Compiled: Inutile.cpp
+✓   [2/2] Compiled: MonRhi.cpp
 ℹ Linking...
 ✓ Built: Build\Lib\Debug-Windows\MonRhi.lib
 
 ┌──────────────────────────────────────────────────────────────────────────────────────────────┐
-│  ✓ Build Successful                                                             Time: 0.43s  │
+│  ✓ Build Successful                                                             Time: 0.64s  │
+└──────────────────────────────────────────────────────────────────────────────────────────────┘
+
+╔══════════════════════════════════════════════════════════════════════════════════════════════╗
+║  Project: MonUtil                                                          Kind: STATIC_LIB  ║
+╚══════════════════════════════════════════════════════════════════════════════════════════════╝
+
+ℹ Found 1 source file(s)
+✓   [1/1] Compiled: MonUtil.cpp
+ℹ Linking...
+✓ Built: Build\Lib\Debug-Windows\MonUtil.lib
+
+┌──────────────────────────────────────────────────────────────────────────────────────────────┐
+│  ✓ Build Successful                                                             Time: 0.40s  │
 └──────────────────────────────────────────────────────────────────────────────────────────────┘
 
 ╔══════════════════════════════════════════════════════════════════════════════════════════════╗
@@ -286,35 +301,21 @@ Build Order (2 projects):
 ════════════════════════════════════════════════════════════════════════════════
                                 BUILD COMPLETED                                 
 ════════════════════════════════════════════════════════════════════════════════
-Projects Built:  2/2
-Time:           0.91s
+Projects Built:  3/3
+Time:           1.53s
 Status:         ✓ SUCCESS
 ════════════════════════════════════════════════════════════════════════════════
 
-### Outil qui a parlé
+Là encore la compilation est un succes . Ce qui n'est pas etonnant etant donné qu'on a constaté à l"exercice 3 que le link `MonRhi` n'est de toute façon pas indispensable ici. Je me demande d'ailleurs pourquoi l'un crée une erreur cassante et pas lautre. Pour aller plus loin ce serait peut etre interessant de créer encore un projet dont `MonUtil` depend et d''inverser encore l'ordre de linkage pour voir ce qui se passe
 
-**Jenga**, qui a affiché le résultat global de la construction. La compilation et le linkage ont été réalisés par Clang/MinGW, mais aucun outil n'a signalé d'erreur.
+### Conclusion globale
 
-### Conclusion
+Ces expériences montrent concrètement le rôle des dépendances et du linkage entre plusieurs projets C++.
 
-Dans cette expérience, retirer `links` n'a pas provoqué d'erreur. Cela montre que le projet pouvait encore être construit sans cette directive, probablement parce que les symboles utilisés ne nécessitaient pas effectivement de résolution dans `MonRhi`, ou parce qu'une autre configuration permettait encore la construction.
+Avec l'ajout de `MonUtil`, on constate d'abord que le fait que la bibliothèque soit bien compilée et présente dans le workspace ne suffit pas à rendre ses fonctions disponibles à `Essai`. Lorsque `Essai` utilise directement `PrintUtil()` sans que `MonUtil` soit présente dans `links`, la compilation de `main.cpp` réussit, mais le linkage échoue avec une erreur `undefined reference to 'PrintUtil()'`. L'ajout de `MonUtil` dans `links` permet ensuite de résoudre cette référence et de construire l'exécutable.
 
-Cela ne signifie pas que `links` est inutile en général : si le programme utilisait des fonctions définies uniquement dans une bibliothèque non liée, le linker pourrait signaler des références non définies.
+Le test avec les deux ordres de `links` montre ensuite que, sur la machine utilisée avec la toolchain `clang-mingw`, les deux ordres testés permettent ici d'obtenir un build réussi. L'ordre `["MonRhi", "MonUtil"]` comme l'ordre `["MonUtil", "MonRhi"]` n'a donc pas provoqué d'échec dans cette expérience.
 
-## Tableau récapitulatif
+On retient ainsi que le système de build peut construire les trois projets dans le bon ordre, mais que cela ne signifie pas automatiquement que toutes les bibliothèques sont disponibles au moment du linkage de `Essai`. Une bibliothèque dont les symboles sont utilisés doit être prise en compte par le linkage. Dans notre expérience, `MonUtil` devait donc être ajoutée à `links` dès lors que `Essai` appelait directement `PrintUtil()`.
 
-| Ligne retirée | Message obtenu | Outil qui a parlé |
-| --- | --- | --- |
-| `includedirs` | `'MonRhi/MonRhi.h' file not found` | Compilateur Clang |
-| `libdirs` | `cannot find -lMonRhi: No such file or directory` | Linker GNU `ld` |
-| `links` | `Build Successful` | Jenga, avec Clang/MinGW en arrière-plan |
-
-## Conclusion générale
-
-Cette expérience montre que les trois directives interviennent à des étapes différentes :
-
-- `includedirs` agit lors de la **compilation**, pour trouver les fichiers d'en-tête.
-- `libdirs` agit lors du **linkage**, pour trouver les fichiers de bibliothèque.
-- `links` indique les bibliothèques que le linker doit effectivement utiliser.
-
-Le tableau permet donc de distinguer rapidement une erreur de compilation d'une erreur d'édition des liens et d'identifier la directive responsable.
+Enfin, cette expérience montre l'intérêt de distinguer la compilation de l'édition de liens : ici, les fichiers sources sont correctement compilés, mais c'est au moment de la résolution des références entre bibliothèques que l'absence de `MonUtil` provoque l'échec.
