@@ -26,4 +26,10 @@ with workspace("MonModel"): # Cette ligne crée un workspace Jenga nommé "MonMo
     #     consoleapp()  #Cette ligne indique que le projet est une application console.
     #     language("C++") #Cette ligne indique que le projet est écrit en C++.
     #     cppdialect("C++17") #Cette ligne indique que le projet utilise la norme C++17.
-    #     files(["src/**.cpp"]) #Cette ligne indique que tous les fichiers source C++ dans le répertoire "src" et ses sous-répertoires seront inclus dans le projet.
+    #     location(".") #Cette ligne indique que les fichiers sources du projet se trouvent dans le répertoire courant.
+    #     files(["src/MyApp/**.cpp"]) #Cette ligne indique que tous les fichiers .cpp du projet "MyApp" se trouvent dans le répertoire "src/MyApp" et ses sous dossiers.
+    #     includedirs(["src"]) #Cette ligne indique que le répertoire "src" est inclus dans les chemins de recherche des fichiers d'en-tête.
+    #     objdir("%{wks.location}/Build/Obj/" # Cette ligne indique que les fichiers objets générés par le projet seront placés dans le répertoire "Build/Obj" du workspace.
+    #          "%{cfg.buildcfg}-%{cfg.system}/%{prj.name}") # Cette ligne indique que les fichiers objets seront organisés par configuration de build, système d'exploitation et nom de projet.
+    #     targetdir("%{wks.location}/Build/Lib/" # Cette ligne indique que les fichiers binaires générés par le projet seront placés dans le répertoire "Build/Lib" du workspace.
+    #          "%{cfg.buildcfg}-%{cfg.system}")  # Cette ligne indique que les fichiers binaires seront organisés par configuration de build et système d'exploitation.
