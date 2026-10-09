@@ -1,179 +1,54 @@
 #include "MonRhi/MonRhi.h"
 
 
-#include <iostream>
-#include <string>
-using namespace std;
+//#include <iostream>
+//#include <string>
 
-const int MAX = 10000;
 
-struct Contexte {
-    string nom;
-    bool core;
-    bool vivant;
+struct Format{
+    int numero ;
+    int manque;
+    int exes;
 };
 
+
 int main() {
+    int dCouleur, dProfondeur, dPochoir;
+    bool dDouble = 0;
+    int choix = 0;
+    std::cin>>dCouleur >> dProfondeur >> dPochoir >> dDouble;
+
     int N;
-    cin >> N;
+    std::cin >> N;
 
-    bool dc = false;
-    bool format = false;
-    bool wgl = false;
-    bool gl = false;
+    // bool dc = false;
+    // bool format = false;
+    // bool wgl = false;
+    // bool gl = false;
 
-    Contexte contextes[MAX];
-    int nbContextes = 0;
-    int erreurs = 0;
-    string courant = "AUCUN";
-
+    
     for (int i = 1; i <= N; i++) {
-        string commande, nom;
-        cin >> commande;
+        
+        int rNumero, rCouleur, rProfondeur, rPochoir;
+        bool rDouble;
 
-        string resultat = "OK";
-
-        if (commande == "GETDC") {
-            dc = true;
+        std::cin>>rNumero >> rCouleur >> rProfondeur >> rPochoir >> rDouble;
+        int manque = (dCouleur - rCouleur)+ (dProfondeur - rProfondeur) + (dPochoir - rPochoir);
+        if (manque <= 0){
+            manque = 0;
         }
-        else if (commande == "FORMAT") {
-            if (!dc)
-                resultat = "ERREUR PAS DE DC";
-            else if (format)
-                resultat = "ERREUR FORMAT DEJA POSE";
-            else
-                format = true;
-        }
-        else if (commande == "CREER" ||
-                 commande == "CREER_ATTRIBS") {
-            cin >> nom;
-
-            if (!format) {
-                resultat = "ERREUR PAS DE FORMAT";
-            }
-            else if (commande == "CREER_ATTRIBS" && !wgl) {
-                resultat = "ERREUR EXTENSION NON CHARGEE";
-            }
-            else {
-                bool existe = false;
-
-                for (int j = 0; j < nbContextes; j++) {
-                    if (contextes[j].nom == nom &&
-                        contextes[j].vivant) {
-                        existe = true;
-                        break;
-                    }
-                }
-
-                if (existe) {
-                    resultat = "ERREUR NOM PRIS";
-                }
-                else {
-                    contextes[nbContextes].nom = nom;
-                    contextes[nbContextes].core =
-                        (commande == "CREER_ATTRIBS");
-                    contextes[nbContextes].vivant = true;
-                    nbContextes++;
-                }
-            }
-        }
-        else if (commande == "COURANT") {
-            cin >> nom;
-
-            if (nom == "AUCUN") {
-                courant = "AUCUN";
-            }
-            else {
-                bool existe = false;
-
-                for (int j = 0; j < nbContextes; j++) {
-                    if (contextes[j].nom == nom &&
-                        contextes[j].vivant) {
-                        existe = true;
-                        break;
-                    }
-                }
-
-                if (!existe)
-                    resultat = "ERREUR CONTEXTE INCONNU";
-                else
-                    courant = nom;
-            }
-        }
-        else if (commande == "CHARGER_WGL") {
-            if (courant == "AUCUN")
-                resultat = "ERREUR PAS DE CONTEXTE COURANT";
-            else
-                wgl = true;
-        }
-        else if (commande == "CHARGER_GL") {
-            if (courant == "AUCUN")
-                resultat = "ERREUR PAS DE CONTEXTE COURANT";
-            else
-                gl = true;
-        }
-        else if (commande == "DETRUIRE") {
-            cin >> nom;
-
-            int indice = -1;
-
-            for (int j = 0; j < nbContextes; j++) {
-                if (contextes[j].nom == nom &&
-                    contextes[j].vivant) {
-                    indice = j;
-                    break;
-                }
-            }
-
-            if (indice == -1) {
-                resultat = "ERREUR CONTEXTE INCONNU";
-            }
-            else if (courant == nom) {
-                resultat = "ERREUR CONTEXTE COURANT";
-            }
-            else {
-                contextes[indice].vivant = false;
-            }
-        }
-        else if (commande == "GL") {
-            cin >> nom;
-
-            if (courant == "AUCUN" || !gl)
-                resultat = "PLANTAGE ADRESSE ZERO";
+        int exes = (rCouleur - dCouleur)+ (rProfondeur - dProfondeur) + (rPochoir - dPochoir);
+        if (exes < 0){
+            exes = 0;
         }
 
-        if (resultat != "OK")
-            erreurs++;
-
-        cout << i << " " << resultat << '\n';
-    }
-
-    cout << "ERREURS " << erreurs << '\n';
-    cout << "COURANT " << courant << '\n';
-
-    if (courant == "AUCUN") {
-        cout << "PROFIL AUCUN\n";
-    }
-    else {
-        for (int i = 0; i < nbContextes; i++) {
-            if (contextes[i].nom == courant &&
-                contextes[i].vivant) {
-                cout << "PROFIL "
-                     << (contextes[i].core ? "CORE" : "COMPATIBILITE")
-                     << '\n';
-                break;
-            }
+        if (dDouble != rDouble) {
+            continue;
         }
     }
-
-    int vivants = 0;
-
-    for (int i = 0; i < nbContextes; i++) {
-        if (contextes[i].vivant)
-            vivants++;
+    if (choix == 0) {
+        std::cout << "AUCUN FORMAT\n";
     }
-
-    cout << "VIVANTS " << vivants << '\n';
-
+    
     return 0;
 }
