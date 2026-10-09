@@ -1,0 +1,5 @@
+Pourquoi le mode naif accumule les erreurs : il ignore les événements de fenêtre et reste attaché au numéro 0. Après PERTE, les images rencontrent une surface morte; après RETOUR, la nouvelle surface porte un autre numéro, donc l'attachement est périmé.
+
+Pourquoi le premier MONTREE du scenario B ne suffit pas : il arrive avant RETOUR, alors que la surface est encore morte. Le programme corrigé reste détaché; seul le MONTREE suivant, après le retour de la surface, peut le rattacher.
+
+Ce qui arriverait sans la pause du sommeil : tant qu'il est détaché, le programme continuerait à lancer des tours de boucle sans produire d'image. Il gaspillerait du processeur au lieu d'attendre un événement qui permet le rattachement.
