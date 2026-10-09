@@ -36,10 +36,10 @@ int main(){
             std::cout<< nom << " " << codeDemande <<" " <<  codeRapporte << " " << "EXACT"<< std::endl;
             accepte++;
         }
-    }
-    std::cout<< "REFUSES: " << refuses << std::endl;
-    std::cout<< "SUSPECTS: " << suspects << std::endl;
+    }     
     std::cout<< "ACCEPTABLES: " << accepte << std::endl;
+    std::cout<< "SUSPECTS: " << suspects << std::endl;
+    std::cout<< "REFUSES: " << refuses << std::endl;
 
     return 0;
 }
