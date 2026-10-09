@@ -37,9 +37,9 @@ int main(){
             accepte++;
         }
     }     
-    std::cout<< "ACCEPTABLES: " << accepte << std::endl;
-    std::cout<< "SUSPECTS: " << suspects << std::endl;
-    std::cout<< "REFUSES: " << refuses << std::endl;
+    std::cout<< "ACCEPTABLES " << accepte << std::endl;
+    std::cout<< "SUSPECTS " << suspects << std::endl;
+    std::cout<< "REFUSES " << refuses << std::endl;
 
     return 0;
 }
