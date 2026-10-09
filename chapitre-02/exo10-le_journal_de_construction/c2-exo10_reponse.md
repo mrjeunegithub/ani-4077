@@ -7,7 +7,7 @@ Ici seront notés toutes les erreurs que j'aurai lors de mes execution de **jeng
 |Message d'erreur|Cause réelle|Temps avant solution|Date|
 | --- | --- | --- | --- |
 |1- `undefined reference to 'PrintUtil()'`|Le linker n'a pas trouvé la bibliothèque contenant **PrintUtil()**| **0s** puisque l'erreur etait ici attendue|**25-09-2026**|
-|2-...|...|...|...|
+|2- `jenga: error executing command 'rebuild': [WinError 5] Access is denied: 'C:\\dane\\ecole\\GAP-3\\Rihen\\JengaTest\\Test1\\test1\\Build\\Bin\\Debug-Windows\\Mega\\Mega.exe'`|Le programe est toujours en cours donc impossible de le supprimer pour rebuil|**10 min**|**03-10-2026**|
 
 ### Qu'est ce que j''en tire
 

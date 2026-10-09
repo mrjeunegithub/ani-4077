@@ -16,3 +16,10 @@ void Somme(){
 void Transition(){
     PrintUtil();
 }
+
+int CodeVersion(std::string version){
+    int point = version.find('.');
+    int majeur = std::stoi(version.substr(0, point));
+    int mineur = std::stoi(version.substr(point+1));
+    return majeur*10 + mineur;
+}
