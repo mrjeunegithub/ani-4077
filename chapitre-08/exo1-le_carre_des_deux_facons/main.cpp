@@ -1,0 +1,287 @@
+// =============================================================================
+// Chapitre 8 : comparaison des maillages avec et sans index.
+// =============================================================================
+#include "NKWindow/NKMain.h"
+#include "NKWindow/Core/NkWindow.h"
+#include "NKWindow/Core/NkWindowConfig.h"
+#include "NKWindow/Core/NkSurface.h"
+#include "NKEvent/NkEventSystem.h"
+#include "NKEvent/NkWindowEvent.h"
+
+#include "NKLogger/NkLog.h"
+#include "NKPlatform/NkEnv.h"
+#include "NKTime/NkChrono.h"
+#include "MonRhi/MonRhi.h"
+#include "MonRhi/Contexte.h"
+#include "MonRhi/Maillage.h"
+#include "MonRhi/Nuanceur.h"
+#include "MonRhi/Gl.h"
+// Retiré l'include EtatGl.h ajouté pour l'exercice précédent.
+
+#include <cstddef> // Pour std::size_t et les calculs d'octets.
+#include <cstdlib>
+
+using namespace nkentseu;
+
+namespace {
+
+	const float kPetroleR = 0.05f;
+	const float kPetroleV = 0.25f;
+	const float kPetroleB = 0.28f;
+
+	// Nuanceur de sommets conservé depuis le chapitre 6.
+	const char *kSommets = R"(
+layout(location = 0) in vec3 aPosition;
+layout(location = 1) in vec3 aCouleur;
+
+out vec3 vCouleur;
+
+void main() {
+    vCouleur = aCouleur;
+    gl_Position = vec4(aPosition, 1.0);
+}
+)";
+
+	// Nuanceur de fragments conservé depuis le chapitre 6.
+	const char *kFragments = R"(
+in vec3 vCouleur;
+
+out vec4 oCouleur;
+
+void main() {
+    oCouleur = vec4(vCouleur, 1.0);
+}
+)";
+
+	//Carré sans index, placé en haut à gauche.
+	const monrhi::Sommet kCarreSansIndex[6] = {
+		{ -0.70f, 0.25f, 0.0f, 0.96f, 0.62f, 0.14f },
+		{ -0.30f, 0.25f, 0.0f, 0.20f, 0.75f, 0.70f },
+		{ -0.30f, 0.65f, 0.0f, 0.90f, 0.30f, 0.35f },
+		{ -0.70f, 0.25f, 0.0f, 0.96f, 0.62f, 0.14f },
+		{ -0.30f, 0.65f, 0.0f, 0.90f, 0.30f, 0.35f },
+		{ -0.70f, 0.65f, 0.0f, 0.95f, 0.95f, 0.95f },
+	};
+
+// Carré avec index, placé en haut à droite.
+	const monrhi::Sommet kCarreCoins[4] = {
+		{ 0.30f, 0.25f, 0.0f, 0.96f, 0.62f, 0.14f },
+		{ 0.70f, 0.25f, 0.0f, 0.20f, 0.75f, 0.70f },
+		{ 0.70f, 0.65f, 0.0f, 0.90f, 0.30f, 0.35f },
+		{ 0.30f, 0.65f, 0.0f, 0.95f, 0.95f, 0.95f },
+	};
+
+	const unsigned short kCarreIndex[6] = { 0, 1, 2, 0, 2, 3 };
+
+// Maison sans index, placée en bas à gauche.
+	const monrhi::Sommet kMaisonSansIndex[9] = {
+		{ -0.70f, -0.65f, 0.0f, 0.96f, 0.62f, 0.14f },
+		{ -0.30f, -0.65f, 0.0f, 0.20f, 0.75f, 0.70f },
+		{ -0.30f, -0.25f, 0.0f, 0.90f, 0.30f, 0.35f },
+		{ -0.70f, -0.65f, 0.0f, 0.96f, 0.62f, 0.14f },
+		{ -0.30f, -0.25f, 0.0f, 0.90f, 0.30f, 0.35f },
+		{ -0.70f, -0.25f, 0.0f, 0.95f, 0.95f, 0.95f },
+		{ -0.70f, -0.25f, 0.0f, 0.95f, 0.95f, 0.95f },
+		{ -0.30f, -0.25f, 0.0f, 0.90f, 0.30f, 0.35f },
+		{ -0.50f,  0.10f, 0.0f, 0.96f, 0.62f, 0.14f },
+	};
+
+// Maison avec index, placée en bas à droite.
+	const monrhi::Sommet kMaisonCoins[5] = {
+		{ 0.30f, -0.65f, 0.0f, 0.96f, 0.62f, 0.14f },
+		{ 0.70f, -0.65f, 0.0f, 0.20f, 0.75f, 0.70f },
+		{ 0.70f, -0.25f, 0.0f, 0.90f, 0.30f, 0.35f },
+		{ 0.30f, -0.25f, 0.0f, 0.95f, 0.95f, 0.95f },
+		{ 0.50f,  0.10f, 0.0f, 0.96f, 0.62f, 0.14f },
+	};
+
+	const unsigned short kMaisonIndex[9] = {
+		0, 1, 2,
+		0, 2, 3,
+		3, 2, 4
+	};
+
+} // namespace
+
+int nkmain(const NkEntryState &state) {
+	(void)state;
+
+	NkInitialise();
+	NkChrono::BeginPreciseTiming();
+
+	NkWindowConfig cfg;
+	cfg.title = "Etape 08 - le carre avec et sans index"; // [MODIFIÉ]
+	cfg.width = 1280;
+	cfg.height = 720;
+	cfg.centered = true;
+
+	NkWindow fenetre(cfg);
+	if (!fenetre.IsValid()) {
+		logger.Error("la fenetre ne s'est pas ouverte");
+		NkClose();
+		return 1;
+	}
+
+	const NkSurfaceDesc surface = fenetre.GetSurfaceDesc();
+	logger.Infof("%s", monrhi::DecrireSurface(surface).CStr());
+
+	monrhi::Contexte contexte;
+	if (!contexte.Creer(surface)) {
+		logger.Error("contexte impossible : on s'arrete ici.");
+		NkClose();
+		return 1;
+	}
+	logger.Infof("contexte : %s", contexte.Decrire().CStr());
+
+	monrhi::Nuanceur nuanceur;
+	if (!nuanceur.Compiler(kSommets, kFragments)) {
+		logger.Errorf("NUANCEUR REFUSE :\n%s", nuanceur.Erreur().CStr());
+		contexte.Detruire();
+		NkClose();
+		return 1;
+	}
+
+	// Crée le carré sous ses deux représentations.
+	monrhi::Maillage carreSansIndex;
+	if (!carreSansIndex.Creer(kCarreSansIndex, 6)) {
+		logger.Error("creation du carre sans index impossible");
+		carreSansIndex.Detruire();
+		nuanceur.Detruire();
+		contexte.Detruire();
+		NkClose();
+		return 1;
+	}
+
+	monrhi::Maillage carreAvecIndex;
+	if (!carreAvecIndex.CreerIndexe(kCarreCoins, 4, kCarreIndex, 6)) {
+		logger.Error("creation du carre avec index impossible");
+		carreAvecIndex.Detruire();
+		carreSansIndex.Detruire();
+		nuanceur.Detruire();
+		contexte.Detruire();
+		NkClose();
+		return 1;
+	}
+
+	// Crée la maison sans index et avec index.
+	monrhi::Maillage maisonSansIndex;
+	if (!maisonSansIndex.Creer(kMaisonSansIndex, 9)) {
+		logger.Error("creation de la maison sans index impossible");
+		maisonSansIndex.Detruire();
+		carreAvecIndex.Detruire();
+		carreSansIndex.Detruire();
+		nuanceur.Detruire();
+		contexte.Detruire();
+		NkClose();
+		return 1;
+	}
+
+	monrhi::Maillage maisonAvecIndex;
+	if (!maisonAvecIndex.CreerIndexe(kMaisonCoins, 5, kMaisonIndex, 9)) {
+		logger.Error("creation de la maison avec index impossible");
+		maisonAvecIndex.Detruire();
+		maisonSansIndex.Detruire();
+		carreAvecIndex.Detruire();
+		carreSansIndex.Detruire();
+		nuanceur.Detruire();
+		contexte.Detruire();
+		NkClose();
+		return 1;
+	}
+
+	// Les tailles sont calculées à partir des tableaux réellement envoyés.
+	const std::size_t carreSansOctets = sizeof(kCarreSansIndex);
+	const std::size_t carreAvecOctets =
+		sizeof(kCarreCoins) + sizeof(kCarreIndex);
+	const std::size_t carreEconomie = carreSansOctets - carreAvecOctets;
+	const double carrePourcentage =
+		100.0 * static_cast<double>(carreEconomie) /
+		static_cast<double>(carreSansOctets);
+
+	logger.Infof("carre SANS index : 6 sommets, %zu octets", carreSansOctets);
+	logger.Infof("carre AVEC index : 6 index sur 4 sommets, %zu octets",
+				 carreAvecOctets);
+	logger.Infof("economie : %zu octets, soit %.2f %%", carreEconomie,
+				 carrePourcentage);
+
+	// Même calcul pour la maison à cinq coins.
+	const std::size_t maisonSansOctets = sizeof(kMaisonSansIndex);
+	const std::size_t maisonAvecOctets =
+		sizeof(kMaisonCoins) + sizeof(kMaisonIndex);
+	const std::size_t maisonEconomie = maisonSansOctets - maisonAvecOctets;
+	const double maisonPourcentage =
+		100.0 * static_cast<double>(maisonEconomie) /
+		static_cast<double>(maisonSansOctets);
+
+	logger.Infof("maison SANS index : 9 sommets, %zu octets", maisonSansOctets);
+	logger.Infof("maison AVEC index : 9 index sur 5 sommets, %zu octets",
+				 maisonAvecOctets);
+	logger.Infof("economie maison : %zu octets, soit %.2f %%", maisonEconomie,
+				 maisonPourcentage);
+
+	const char *limite = nkentseu::env::GetEnvVar("MONRHI_IMAGES");
+	const unsigned long long maxImages =
+		limite != nullptr ? std::strtoull(limite, nullptr, 10) : 0;
+
+	unsigned long long images = 0;
+	bool tourne = true;
+
+	while (tourne && fenetre.IsOpen()) {
+		NkEvent *ev = nullptr;
+		while (NkEvents().PollEvent(ev)) {
+			if (ev->As<NkWindowCloseEvent>() != nullptr)
+				tourne = false;
+
+			if (ev->As<NkWindowSurfaceDestroyedEvent>() != nullptr ||
+				ev->As<NkWindowHiddenEvent>() != nullptr)
+				contexte.DetacherSurface();
+
+			if (ev->As<NkWindowSurfaceCreatedEvent>() != nullptr ||
+				ev->As<NkWindowShownEvent>() != nullptr)
+				contexte.RattacherSurface(fenetre.GetSurfaceDesc());
+		}
+
+		if (!tourne)
+			break;
+
+		if (!contexte.PeutDessiner()) {
+			NkChrono::Sleep((int64)16);
+			continue;
+		}
+
+		const auto taille = fenetre.GetSize();
+		glViewport(0, 0, (GLsizei)taille.x, (GLsizei)taille.y);
+		glClearColor(kPetroleR, kPetroleV, kPetroleB, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT);
+
+		nuanceur.Activer();
+
+		// Dessine les deux versions du carré et de la maison.
+		// Les géométries partagent leurs coordonnées et se superposent.
+		carreSansIndex.Dessiner();
+		carreAvecIndex.Dessiner();
+		maisonSansIndex.Dessiner();
+		maisonAvecIndex.Dessiner();
+
+		contexte.Echanger();
+		NkChrono::YieldThread();
+
+		++images;
+		if (maxImages != 0 && images >= maxImages)
+			break;
+	}
+
+	logger.Infof("%llu images, fermeture propre", images);
+
+	// Les quatre maillages sont détruits avant le contexte OpenGL.
+	maisonAvecIndex.Detruire();
+	maisonSansIndex.Detruire();
+	carreAvecIndex.Detruire();
+	carreSansIndex.Detruire();
+	nuanceur.Detruire();
+	contexte.Detruire();
+
+	NkChrono::EndPreciseTiming();
+	NkClose();
+	return 0;
+}

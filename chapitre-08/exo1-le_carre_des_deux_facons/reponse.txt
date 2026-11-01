@@ -1,0 +1,5 @@
+Le nombre qui a le plus augmenté : l'économie en octets passe de 36 octets pour le carré à 78 octets pour la maison, soit une hausse de 42 octets. Le pourcentage économisé passe de 25.00 % à 36.11 %, soit 11.11 points de pourcentage.
+
+Pourquoi : sans index, la maison ajoute trois sommets répétés au carré, soit 72 octets de plus. Avec index, elle ajoute un sommet unique et trois index, soit 30 octets de plus. La différence entre ces deux augmentations fait gagner 42 octets d'économie supplémentaire.
+
+Où sont les sommets repris : dans le carré sans index, le quatrième sommet répète le premier (coin bas gauche) et le cinquième répète le troisième (coin haut droit). Dans la maison sans index, ces coins sont répétés pour construire les triangles du carré et du toit ; le coin haut gauche est également repris pour le triangle du toit. Avec index, ces coins ne sont stockés qu'une fois et leurs numéros sont réutilisés dans les tableaux d'index.
