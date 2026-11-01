@@ -2,9 +2,12 @@
 # -*- coding: utf-8 -*-
 
 from Jenga import *
+useconfig("Kits/NKWindowKit/NKWindowKit.jenga")
 
 with workspace("MonRhiWks", location="."):
        configurations(["Debug", "Release"])
+       loadkit("NKGladKit")              # cherche le kit par son nom
+       loadkit("Kits/NKGladKit")  # ou ce dossier precis
 
        # La bibliotheque : du code compile, sans main.
        with project("MonRhi"):
@@ -18,6 +21,8 @@ with workspace("MonRhiWks", location="."):
                      "%{cfg.buildcfg}-%{cfg.system}/%{prj.name}")
               targetdir("%{wks.location}/Build/Lib/"
                      "%{cfg.buildcfg}-%{cfg.system}")
+              usenkwindowkit()
+              usenkgladkit()
 
        with project("MonUtil"):
               staticlib()
@@ -30,6 +35,7 @@ with workspace("MonRhiWks", location="."):
                      "%{cfg.buildcfg}-%{cfg.system}/%{prj.name}")
               targetdir("%{wks.location}/Build/Lib/"
                      "%{cfg.buildcfg}-%{cfg.system}")
+              usenkwindowkit()
 
        # Le programme qui s'en sert.
        with project("Essai"):
@@ -46,3 +52,5 @@ with workspace("MonRhiWks", location="."):
                      "%{cfg.buildcfg}-%{cfg.system}/%{prj.name}")
               targetdir("%{wks.location}/Build/Bin/"
                      "%{cfg.buildcfg}-%{cfg.system}/%{prj.name}")
+              usenkwindowkit()
+              usenkgladkit()

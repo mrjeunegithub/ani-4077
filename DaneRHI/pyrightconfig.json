@@ -16,7 +16,7 @@
     "reportWildcardImportFromLibrary": "none",
     "extraPaths": [
         "C:/dane/ecole/GAP-3/Rihen/Jenga/Jenga",
-        ".jenga-typings"
+        ".jenga/typings"
     ],
-    "_jengaIdeConfigVersion": "8bba5684138322ba"
+    "_jengaIdeConfigVersion": "31dabbc7ec194a65"
 }

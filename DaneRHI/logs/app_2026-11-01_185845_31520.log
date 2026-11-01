@@ -1,0 +1,11 @@
+[2026-11-01 18:58:45.683] [INF] [default] [main.cpp:128 in nkmain] -> surface 1278x712, dpi 1.25, valide : oui
+  hwnd      : 0x1c0dc0
+  hinstance : 0x7ff7cc650000
+[2026-11-01 18:58:45.892] [INF] [default] [main.cpp:136 in nkmain] -> contexte : WGL (Windows) | 3.3.0 - Build 32.0.101.7088 | Intel(R) UHD Graphics
+[2026-11-01 18:58:45.894] [INF] [default] [main.cpp:203 in nkmain] -> carre SANS index : 6 sommets, 144 octets
+[2026-11-01 18:58:45.894] [INF] [default] [main.cpp:204 in nkmain] -> carre AVEC index : 6 index sur 4 sommets, 108 octets
+[2026-11-01 18:58:45.894] [INF] [default] [main.cpp:206 in nkmain] -> economie : 36 octets, soit 25.00 %
+[2026-11-01 18:58:45.895] [INF] [default] [main.cpp:218 in nkmain] -> maison SANS index : 9 sommets, 216 octets
+[2026-11-01 18:58:45.895] [INF] [default] [main.cpp:219 in nkmain] -> maison AVEC index : 9 index sur 5 sommets, 138 octets
+[2026-11-01 18:58:45.895] [INF] [default] [main.cpp:221 in nkmain] -> economie maison : 78 octets, soit 36.11 %
+[2026-11-01 18:59:22.556] [INF] [default] [main.cpp:276 in nkmain] -> 79549 images, fermeture propre

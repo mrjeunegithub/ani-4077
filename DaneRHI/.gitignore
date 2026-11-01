@@ -19,6 +19,6 @@ Build/
 *.dll
 *.o
 *.obj
-NkentseuKit/
-**/NkentseuKit/
-**/include/NKentseuKit/
+Kits/
+**/Kits/
+**/include/Kits/
