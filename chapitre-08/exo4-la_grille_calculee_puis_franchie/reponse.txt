@@ -1,0 +1,5 @@
+La formule : une grille de N × N sommets contient N² sommets et 2(N−1)² triangles, donc 6(N−1)² index. Sans index, les octets valent 6(N−1)² × sizeof(Sommet). Avec index sur deux octets, ils valent N² × sizeof(Sommet) + 6(N−1)² × sizeof(unsigned short). Pour quatre octets, on remplace sizeof(unsigned short) par sizeof(unsigned int).
+
+Vers quoi tend le rapport : le rapport sans index / avec index tend vers 4 avec des index de deux octets. Pour une grande grille, les termes dominants sont environ 144N² octets sans index et 36N² avec index : 144 / 36 = 4.
+
+Ce que montrent les deux captures : avec des index de deux octets, la grille de 70 225 sommets est déformée, car certains sommets ont des numéros supérieurs à 65 535, valeur maximale d'un unsigned short. Les index débordent et désignent de mauvais sommets. Avec des index de quatre octets, la même grille et les mêmes index logiques sont représentés sans débordement ; les rangées alternées restent régulières.

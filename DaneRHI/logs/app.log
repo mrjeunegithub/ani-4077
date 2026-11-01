@@ -1,6 +1,10 @@
-[2026-11-01 22:23:09.741] [INF] [default] [main.cpp:98 in nkmain] -> surface 1278x712, dpi 1.25, valide : oui
-  hwnd      : 0x2c0dae
-  hinstance : 0x7ff68ee80000
-[2026-11-01 22:23:09.840] [INF] [default] [main.cpp:109 in nkmain] -> contexte : WGL (Windows) | 3.3.0 - Build 32.0.101.7088 | Intel(R) UHD Graphics
-[2026-11-01 22:23:09.851] [INF] [default] [main.cpp:185 in nkmain] -> sans glad : glGetError = 0x0000, centre (13, 64, 71)
-[2026-11-01 22:23:24.137] [INF] [default] [main.cpp:201 in nkmain] -> 31512 images, fermeture propre
+[2026-11-01 23:49:57.075] [INF] [default] [main.cpp:139 in nkmain] -> surface 1278x712, dpi 1.25, valide : oui
+  hwnd      : 0x1120b9c
+  hinstance : 0x7ff7dafb0000
+[2026-11-01 23:49:57.192] [INF] [default] [main.cpp:154 in nkmain] -> contexte : WGL (Windows) | 3.3.0 - Build 32.0.101.7088 | Intel(R) UHD Graphics
+[2026-11-01 23:49:57.195] [INF] [default] [main.cpp:191 in nkmain] -> N = 2 : sans index 144 octets, avec index 108 octets, rapport 1.33
+[2026-11-01 23:49:57.195] [INF] [default] [main.cpp:191 in nkmain] -> N = 10 : sans index 11664 octets, avec index 3372 octets, rapport 3.46
+[2026-11-01 23:49:57.200] [INF] [default] [main.cpp:191 in nkmain] -> N = 100 : sans index 1411344 octets, avec index 357612 octets, rapport 3.95
+[2026-11-01 23:49:57.228] [INF] [default] [main.cpp:216 in nkmain] -> grille 265 : 70225 sommets, index sur 4 octets, 3358104 octets
+[2026-11-01 23:49:57.257] [INF] [default] [main.cpp:285 in nkmain] -> avec glad : glGetError = 0x0000, centre (220, 202, 55)
+[2026-11-01 23:50:57.416] [INF] [default] [main.cpp:301 in nkmain] -> 41314 images, fermeture propre

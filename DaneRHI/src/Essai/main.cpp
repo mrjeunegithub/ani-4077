@@ -20,6 +20,8 @@
 
 #include <cstddef> // Pour std::size_t et les calculs d'octets.
 #include <cstdlib>
+#include <vector>
+#include <initializer_list>
 
 using namespace nkentseu;
 
@@ -53,27 +55,66 @@ void main() {
 }
 )";
 
-	const monrhi::Sommet kCarreCoins[4] = {
-    { -0.20f, -0.20f, 0.0f, 0.96f, 0.62f, 0.14f }, // 0 : bas gauche
-    {  0.20f, -0.20f, 0.0f, 0.20f, 0.75f, 0.70f }, // 1 : bas droite
-    {  0.20f,  0.20f, 0.0f, 0.90f, 0.30f, 0.35f }, // 2 : haut droite
-    { -0.20f,  0.20f, 0.0f, 0.95f, 0.95f, 0.95f }, // 3 : haut gauche
-};
+	struct DonneesGrille {
+		std::vector<monrhi::Sommet> sommets;
+		std::vector<unsigned int> index32;
+		std::vector<unsigned short> index16;
+		std::vector<monrhi::Sommet> sansIndex;
+	};
 
-// Pour le premier essai :
-const unsigned short kCarreIndex[6] = { 0, 1, 2, 0, 2, 3 };
-const char *kOrdreTexte = "{0,1,2, 0,2,3}";
+	DonneesGrille FabriquerGrille(unsigned int n) {
+		DonneesGrille g;
 
-//[À essayer ensuite] :
-// const unsigned short kCarreIndex[6] = { 0, 1, 2, 2, 3, 0 };
-// const char *kOrdreTexte = "{0,1,2, 2,3,0}";
+		if (n < 2)
+			return g;
 
-//[Troisième essai] Puis par :
-//const unsigned short kCarreIndex[6] = { 0, 2, 1, 0, 3, 2 };
-//const char *kOrdreTexte = "{0,2,1, 0,3,2}";
+		g.sommets.reserve(static_cast<std::size_t>(n) * n);
 
-//Change aussi cette valeur entre les deux lancements de chaque ordre.
-constexpr bool kActiverTri = true;
+		// Sommets répartis sur le carré [-0.9, 0.9].
+		for (unsigned int ligne = 0; ligne < n; ++ligne) {
+			const float y = -0.9f + 1.8f * ligne / (n - 1);
+
+			// Une couleur franche par rangée, alternée une rangée sur deux.
+			const bool rangeeClaire = (ligne % 2) == 0;
+			const float r = rangeeClaire ? 1.0f : 0.05f;
+			const float v = rangeeClaire ? 0.9f : 0.15f;
+			const float b = rangeeClaire ? 0.1f : 0.9f;
+
+			for (unsigned int colonne = 0; colonne < n; ++colonne) {
+				const float x = -0.9f + 1.8f * colonne / (n - 1);
+				g.sommets.push_back({x, y, 0.0f, r, v, b});
+			}
+		}
+
+		// Chaque case est formée de deux triangles.
+		for (unsigned int ligne = 0; ligne + 1 < n; ++ligne) {
+			for (unsigned int colonne = 0; colonne + 1 < n; ++colonne) {
+				const unsigned int v00 = ligne * n + colonne;
+				const unsigned int v10 = v00 + 1;
+				const unsigned int v01 = v00 + n;
+				const unsigned int v11 = v01 + 1;
+
+				// Triangles : v00-v10-v11 et v00-v11-v01.
+				const unsigned int indices[] = {
+					v00, v10, v11,
+					v00, v11, v01
+				};
+
+				for (unsigned int i : indices) {
+					g.index32.push_back(i);
+
+					// Pour l'essai 16 bits de N=265, la conversion tronque
+					// volontairement les valeurs qui dépassent 65 535.
+					g.index16.push_back(static_cast<unsigned short>(i));
+
+					// La version sans index recopie le sommet référencé.
+					g.sansIndex.push_back(g.sommets[i]);
+				}
+			}
+		}
+
+		return g;
+	}
 }
 int nkmain(const NkEntryState &state) {
 	(void)state;
@@ -97,15 +138,19 @@ int nkmain(const NkEntryState &state) {
 	const NkSurfaceDesc surface = fenetre.GetSurfaceDesc();
 	logger.Infof("%s", monrhi::DecrireSurface(surface).CStr());
 
+	constexpr bool kIndex32PourCapture = true; // false : capture 2 octets ; true : capture 4 octets
+
 	monrhi::Contexte contexte;
-	constexpr bool kRetirerVerificationGlad = true; // false : premier lancement, glad vérifie
+	constexpr bool kRetirerVerificationGlad = false; // false : premier lancement, glad vérifie
+
 	if (!contexte.Creer(surface)) {
 		logger.Error("contexte impossible : on s'arrete ici.");
 		NkClose();
 		return 1;
 	}
 	if (kRetirerVerificationGlad)
-    		gladUninstallGLDebug();
+    	gladUninstallGLDebug();
+
 	logger.Infof("contexte : %s", contexte.Decrire().CStr());
 
 	monrhi::Nuanceur nuanceur;
@@ -116,15 +161,77 @@ int nkmain(const NkEntryState &state) {
 		return 1;
 	}
 
-	monrhi::Maillage carre;
-	if (!carre.CreerIndexe(kCarreCoins, 4, kCarreIndex, 6)) {
-		logger.Error("creation du carre indexe impossible");
-		carre.Detruire();
-		nuanceur.Detruire();
-		contexte.Detruire();
-		NkClose();
-		return 1;
-}
+	for (unsigned int n : {2u, 10u, 100u}) {
+		DonneesGrille g = FabriquerGrille(n);
+
+		monrhi::Maillage maillageSans;
+		monrhi::Maillage maillageAvec;
+
+		if (!maillageSans.Creer(g.sansIndex.data(),
+								static_cast<int>(g.sansIndex.size()))) {
+			logger.Error("creation de la grille sans index impossible");
+			return 1;
+		}
+
+		if (!maillageAvec.CreerIndexe(g.sommets.data(),
+									static_cast<int>(g.sommets.size()),
+									g.index16.data(),
+									static_cast<int>(g.index16.size()))) {
+			maillageSans.Detruire();
+			logger.Error("creation de la grille indexee impossible");
+			return 1;
+		}
+
+		const std::size_t octetsSans = g.sansIndex.size() * sizeof(monrhi::Sommet);
+		const std::size_t octetsAvec =
+			g.sommets.size() * sizeof(monrhi::Sommet) +
+			g.index16.size() * sizeof(unsigned short);
+		const double rapport = static_cast<double>(octetsSans) / octetsAvec;
+
+		logger.Infof("N = %u : sans index %zu octets, avec index %zu octets, rapport %.2f",
+					n, octetsSans, octetsAvec, rapport);
+
+		maillageAvec.Detruire();
+		maillageSans.Detruire();
+	}
+
+	DonneesGrille grande = FabriquerGrille(265);
+
+	monrhi::Maillage grilleGrande;
+
+	if (kIndex32PourCapture) {
+		if (!grilleGrande.CreerIndexe32(
+				grande.sommets.data(),
+				static_cast<int>(grande.sommets.size()),
+				grande.index32.data(),
+				static_cast<int>(grande.index32.size()))) {
+			logger.Error("creation de la grande grille 32 bits impossible");
+			return 1;
+		}
+
+		const std::size_t octets =
+			grande.sommets.size() * sizeof(monrhi::Sommet) +
+			grande.index32.size() * sizeof(unsigned int);
+
+		logger.Infof("grille 265 : 70225 sommets, index sur 4 octets, %zu octets",
+					octets);
+	} else {
+		if (!grilleGrande.CreerIndexe(
+				grande.sommets.data(),
+				static_cast<int>(grande.sommets.size()),
+				grande.index16.data(),
+				static_cast<int>(grande.index16.size()))) {
+			logger.Error("creation de la grande grille 16 bits impossible");
+			return 1;
+		}
+
+		const std::size_t octets =
+			grande.sommets.size() * sizeof(monrhi::Sommet) +
+			grande.index16.size() * sizeof(unsigned short);
+
+		logger.Infof("grille 265 : 70225 sommets, index sur 2 octets, %zu octets",
+					octets);
+	}
 	
 	const char *limite = nkentseu::env::GetEnvVar("MONRHI_IMAGES");
 	const unsigned long long maxImages =
@@ -133,10 +240,6 @@ int nkmain(const NkEntryState &state) {
 	unsigned long long images = 0;
 	bool tourne = true;
 
-	if (kActiverTri)
-    glEnable(GL_CULL_FACE);
-	else
-    glDisable(GL_CULL_FACE);
 
 	while (tourne && fenetre.IsOpen()) {
 		NkEvent *ev = nullptr;
@@ -168,13 +271,10 @@ int nkmain(const NkEntryState &state) {
 
 		nuanceur.Activer();
 
-		// Dessine les deux versions du carré et de la maison.
-		// Les géométries partagent leurs coordonnées et se superposent.
-		nuanceur.Activer();
-
 		while (glGetError() != GL_NO_ERROR) {}
 
-		carre.Dessiner();
+		
+		grilleGrande.Dessiner();
 
 		const GLenum erreur = glGetError();
 
@@ -201,7 +301,7 @@ int nkmain(const NkEntryState &state) {
 	logger.Infof("%llu images, fermeture propre", images);
 
 	// Les quatre maillages sont détruits avant le contexte OpenGL.
-	carre.Detruire();
+	grilleGrande.Detruire();
 	nuanceur.Detruire();
 	contexte.Detruire();
 

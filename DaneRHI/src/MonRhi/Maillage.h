@@ -46,6 +46,9 @@ namespace monrhi {
 			// Crée un maillage à partir de sommets uniques et d'index.
 			bool CreerIndexe(const Sommet *sommets, int nombreSommets,
 							 const unsigned short *index, int nombreIndex);
+			// Ajoute à côté de CreerIndexe :
+			bool CreerIndexe32(const Sommet *sommets, int nombreSommets,
+							const unsigned int *index, int nombreIndex);	
 
 			void Detruire();
 
@@ -67,6 +70,8 @@ namespace monrhi {
 
 			// Nombre de sommets sans EBO, nombre d'index avec EBO.
 			int mNombre = 0;
+			// true si l'EBO contient des unsigned int de 4 octets.
+			bool mIndex32 = false;
 	};
 
 } // namespace monrhi
