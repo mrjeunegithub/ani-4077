@@ -1,25 +1,20 @@
-# Genere par Jenga a la creation du workspace.
-
-# Config IDE locale (chemins machine-specifiques -> regeneree a chaque build)
 .vscode/
-pyrightconfig.json
-
-# Artefacts de build et caches Jenga
 Build/
 .jenga/
+.jenga-typings/
+.nkcode/
+Kits/
+logs/
 
-# Python
 __pycache__/
 *.py[cod]
 
-
-Build/
 *.exe
 *.lib
 *.dll
 *.o
 *.obj
-Kits/
-**/Kits/
-**/include/Kits/
-**/.nkcode
+*.pdb
+*.ilk
+*.pch
+*.exp
