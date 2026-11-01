@@ -1,0 +1,5 @@
+Ce qui ne change pas : sans tri, les trois ordres donnent la même couleur au pixel du centre : (237, 119, 68). Les deux premiers ordres donnent aussi cette couleur avec le tri activé. Ils décrivent le même carré et gardent le même sens de parcours des sommets pour chaque triangle.
+
+Ce que change le tri : l'ordre {0,2,1, 0,3,2}, avec tri, ne dessine plus le carré. Le pixel du centre vaut alors (13, 64, 71), la couleur pétrole du fond, au lieu de la couleur du carré. Sans tri, cet ordre inversé dessine toujours le carré.
+
+La règle que suit le tri : OpenGL détermine l'orientation d'une face à partir de l'ordre dans lequel ses sommets sont parcourus. Par défaut, les faces antihoraires sont considérées comme les faces avant et le tri activé écarte les faces arrière. Les deux premiers index gardent l'orientation antihoraire ; le troisième inverse l'orientation des deux triangles, qui sont donc écartés.
