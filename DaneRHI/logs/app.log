@@ -1,6 +1,6 @@
-[2026-11-01 21:23:12.958] [INF] [default] [main.cpp:98 in nkmain] -> surface 1278x712, dpi 1.25, valide : oui
-  hwnd      : 0x4b0df6
-  hinstance : 0x7ff7c1c40000
-[2026-11-01 21:23:13.063] [INF] [default] [main.cpp:106 in nkmain] -> contexte : WGL (Windows) | 3.3.0 - Build 32.0.101.7088 | Intel(R) UHD Graphics
-[2026-11-01 21:23:13.079] [INF] [default] [main.cpp:177 in nkmain] -> ordre {0,2,1, 0,3,2}, avec tri : centre (13, 64, 71)
-[2026-11-01 21:23:20.694] [INF] [default] [main.cpp:193 in nkmain] -> 16654 images, fermeture propre
+[2026-11-01 22:23:09.741] [INF] [default] [main.cpp:98 in nkmain] -> surface 1278x712, dpi 1.25, valide : oui
+  hwnd      : 0x2c0dae
+  hinstance : 0x7ff68ee80000
+[2026-11-01 22:23:09.840] [INF] [default] [main.cpp:109 in nkmain] -> contexte : WGL (Windows) | 3.3.0 - Build 32.0.101.7088 | Intel(R) UHD Graphics
+[2026-11-01 22:23:09.851] [INF] [default] [main.cpp:185 in nkmain] -> sans glad : glGetError = 0x0000, centre (13, 64, 71)
+[2026-11-01 22:23:24.137] [INF] [default] [main.cpp:201 in nkmain] -> 31512 images, fermeture propre

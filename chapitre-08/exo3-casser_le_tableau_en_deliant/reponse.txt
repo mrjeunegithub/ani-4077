@@ -1,0 +1,5 @@
+Ce que je vois : avec glad, le carré est visible et le pixel central vaut (237, 119, 68). Sans glad, le carré indexé ne s'affiche plus et le pixel central vaut (13, 64, 71), la couleur pétrole du fond.
+
+Ce que dit glGetError : la lecture rend 0x0000 dans les deux lancements, ce qui signifie qu'aucune erreur n'est présente dans la file au moment de la lecture. Ce résultat ne prouve pas à lui seul que le dessin a réussi : la couleur du pixel et l'image montrent que le carré n'a pas été dessiné dans le second lancement.
+
+Ce que glad change : glad ajoute une vérification des erreurs après les appels OpenGL. Dans mes mesures, le lancement avec cette vérification laisse le carré visible, tandis que le lancement après gladUninstallGLDebug() le laisse disparaître. Pourtant, glGetError rend 0x0000 dans les deux cas ; ces résultats montrent une différence d'affichage, mais ne montrent pas une erreur récupérée par glGetError.

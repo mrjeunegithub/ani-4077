@@ -100,7 +100,9 @@ namespace monrhi {
 					 index, GL_STATIC_DRAW);
 
 		// Délier le VAO en premier conserve son association à l'EBO.
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); // EBO délié pendant que le VAO du maillage est actif
 		glBindVertexArray(0);
+		
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 		// En mode indexé, mNombre compte les index à dessiner.

@@ -61,16 +61,16 @@ void main() {
 };
 
 // Pour le premier essai :
-// const unsigned short kCarreIndex[6] = { 0, 1, 2, 0, 2, 3 };
-// const char *kOrdreTexte = "{0,1,2, 0,2,3}";
+const unsigned short kCarreIndex[6] = { 0, 1, 2, 0, 2, 3 };
+const char *kOrdreTexte = "{0,1,2, 0,2,3}";
 
-//[À essayer ensuite] Remplace les deux lignes précédentes par :
+//[À essayer ensuite] :
 // const unsigned short kCarreIndex[6] = { 0, 1, 2, 2, 3, 0 };
 // const char *kOrdreTexte = "{0,1,2, 2,3,0}";
 
 //[Troisième essai] Puis par :
-const unsigned short kCarreIndex[6] = { 0, 2, 1, 0, 3, 2 };
-const char *kOrdreTexte = "{0,2,1, 0,3,2}";
+//const unsigned short kCarreIndex[6] = { 0, 2, 1, 0, 3, 2 };
+//const char *kOrdreTexte = "{0,2,1, 0,3,2}";
 
 //Change aussi cette valeur entre les deux lancements de chaque ordre.
 constexpr bool kActiverTri = true;
@@ -98,11 +98,14 @@ int nkmain(const NkEntryState &state) {
 	logger.Infof("%s", monrhi::DecrireSurface(surface).CStr());
 
 	monrhi::Contexte contexte;
+	constexpr bool kRetirerVerificationGlad = true; // false : premier lancement, glad vérifie
 	if (!contexte.Creer(surface)) {
 		logger.Error("contexte impossible : on s'arrete ici.");
 		NkClose();
 		return 1;
 	}
+	if (kRetirerVerificationGlad)
+    		gladUninstallGLDebug();
 	logger.Infof("contexte : %s", contexte.Decrire().CStr());
 
 	monrhi::Nuanceur nuanceur;
@@ -168,15 +171,20 @@ int nkmain(const NkEntryState &state) {
 		// Dessine les deux versions du carré et de la maison.
 		// Les géométries partagent leurs coordonnées et se superposent.
 		nuanceur.Activer();
+
+		while (glGetError() != GL_NO_ERROR) {}
+
 		carre.Dessiner();
 
-		if (images == 2) { // images commence à zéro : ceci correspond à la 3e image
+		const GLenum erreur = glGetError();
+
+		if (images == 2) { // images commence à zéro : 2 correspond à la 3e image
 			unsigned char px[4]{};
 			glReadPixels(640, 360, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, px);
 
-			logger.Infof("ordre %s, %s tri : centre (%u, %u, %u)",
-						kOrdreTexte,
-						kActiverTri ? "avec" : "sans",
+			logger.Infof("%s : glGetError = 0x%04X, centre (%u, %u, %u)",
+						kRetirerVerificationGlad ? "sans glad" : "avec glad",
+						static_cast<unsigned int>(erreur),
 						static_cast<unsigned int>(px[0]),
 						static_cast<unsigned int>(px[1]),
 						static_cast<unsigned int>(px[2]));

@@ -1,0 +1,2 @@
+avec glad : glGetError = 0x0000, centre (237, 119, 68)
+sans glad : glGetError = 0x0000, centre (13, 64, 71)
