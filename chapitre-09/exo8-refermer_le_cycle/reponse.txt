@@ -1,0 +1,5 @@
+Les deux carres sont-ils identiques : Non. La fermeture approximative par GAMMA avec l'exposant 1/2,2 ne rend pas toujours l'octet de depart : par exemple, 5 devient 13 dans le scenario A, et 3 devient 11 dans le scenario B. Avec EXACT, la vraie courbe inverse rend l'octet de depart pour chaque valeur des deux scenarios.
+
+D'ou vient l'ecart residuel : La courbe sRGB est une courbe par morceaux : elle est lineaire pres du noir (jusqu'a 0,04045), puis suit une puissance 2,4. Une puissance unique 1/2,2 n'est qu'une approximation de sa courbe inverse et ne compense donc pas exactement le decodage. Dans le scenario A, l'octet 5 ressort a 13, soit un ecart de +8 ; dans le scenario B, l'octet 3 ressort a 11, soit aussi +8.
+
+Ou l'ecart est le plus grand : Les plus grands ecarts observes sont dans les tons tres sombres. Le maximum absolu vaut 8 : il est atteint pour l'octet 5 du scenario A et pour l'octet 3 du scenario B. Dans le scenario B, l'octet 10 atteint aussi 8, mais le premier octet qui atteint ce maximum est 3.
